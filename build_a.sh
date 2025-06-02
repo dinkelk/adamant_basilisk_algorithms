@@ -31,7 +31,7 @@ run cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../riscv32-toolchain
 
 echo
 echo "Step 4: Building the static library..."
-run make
+run make VERBOSE=1
 
 echo
 echo "Build completed successfully!"
