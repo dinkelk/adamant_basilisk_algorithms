@@ -17,7 +17,7 @@
 
  */
 #pragma once
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 #include <algorithm>
 //#include <cmath>
