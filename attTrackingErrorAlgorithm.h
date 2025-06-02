@@ -22,9 +22,9 @@
 
 #include <Eigen/Core>
 
-#include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+#include "AttGuidMsgPayload.h"
+#include "AttRefMsgPayload.h"
+#include "NavAttMsgPayload.h"
 
 class AttTrackingErrorAlgorithm {
    public:
