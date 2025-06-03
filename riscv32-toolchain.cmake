@@ -1,26 +1,43 @@
-# Toolchain file to tell CMake to use riscv32-elf-gcc/g++
-# from GNAT Pro (or any other riscv32-elf‐GCC installation) for cross-compiling.
+# riscv32-toolchain.cmake
 #
-# We also force CMake’s “try_compile” to build a STATIC_LIBRARY
-# (so it never tries to link a full executable and fail on missing crt0.o).
+# Toolchain file for cross-compiling to RISC-V 32 (GNAT Pro or similar).
+# All RISC-V flags live here. CMakeLists.txt does not set any arch/abi flags.
+#
+# This file sets:
+#   • -march=rv32imaf_zicsr -mabi=ilp32f
+#   • For Debug:   -Og -g
+#   • For Release: -O3 -DNDEBUG
+# and forces try_compile() to build only a STATIC_LIBRARY.
 
-# 1) Indicate that we are cross-compiling for a generic (no-OS) target.
-set(CMAKE_SYSTEM_NAME Generic   CACHE STRING "Cross compile for RISC-V 32" FORCE)
+# 1) Cross-compile for a generic (no-OS) target
+set(CMAKE_SYSTEM_NAME Generic CACHE STRING "Cross compile for RISC-V 32" FORCE)
 
-# 2) Point at the RISC-V compiler wrappers (assumed to come from GNAT Pro).
-#    If your riscv32-elf-gcc / riscv32-elf-g++ are in a custom folder,
-#    replace these with absolute paths.
+# 2) Use the GNAT Pro riscv32-elf toolchain
 set(CMAKE_C_COMPILER   riscv32-elf-gcc   CACHE STRING "" FORCE)
 set(CMAKE_CXX_COMPILER riscv32-elf-g++   CACHE STRING "" FORCE)
 
-# 3) Instruct CMake to perform its try_compile() tests by building a STATIC_LIBRARY
-#    instead of an executable. That way, it never tries to link against crt0.o or libgloss.
+# 3) Don’t attempt to link executables during try_compile()
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-# (Optional) If GNAT Pro installed its own sysroot in a nonstandard place, you can
-# hint CMake to look there. For example, if GNAT Pro’s cross-runtime lives in
-# /opt/gnatpro/riscv32-elf/lib, you might do:
-#
-#   set(CMAKE_FIND_ROOT_PATH /opt/gnatpro/riscv32-elf)
-#
-# But often GNAT Pro’s riscv32-elf-g++ already knows its own search paths.
+# 4) Common arch/ABI flags (single string)
+set(RISCV_ARCH_FLAGS "-march=rv32imaf_zicsr -mabi=ilp32f")
+
+# 5) Ensure CMAKE_BUILD_TYPE is set (default to Release)
+if(NOT DEFINED CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Debug or Release" FORCE)
+endif()
+string(TOUPPER "${CMAKE_BUILD_TYPE}" BUILD_TYPE_UPPER)
+message(STATUS "RISC-V toolchain: build type = ${BUILD_TYPE_UPPER}")
+
+# 6) Append into <LANG>_FLAGS_<CONFIG> without semicolons
+if(BUILD_TYPE_UPPER STREQUAL "DEBUG")
+  message(STATUS "Applying RISC-V Debug flags")
+  string(APPEND CMAKE_C_FLAGS_DEBUG   " ${RISCV_ARCH_FLAGS} -Og -g")
+  string(APPEND CMAKE_CXX_FLAGS_DEBUG " ${RISCV_ARCH_FLAGS} -Og -g")
+  string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " ${RISCV_ARCH_FLAGS}")
+else()
+  message(STATUS "Applying RISC-V Release flags")
+  string(APPEND CMAKE_C_FLAGS_RELEASE   " ${RISCV_ARCH_FLAGS} -O3 -DNDEBUG")
+  string(APPEND CMAKE_CXX_FLAGS_RELEASE " ${RISCV_ARCH_FLAGS} -O3 -DNDEBUG")
+  string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASE " ${RISCV_ARCH_FLAGS}")
+endif()
