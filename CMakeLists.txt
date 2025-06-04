@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.15)
 
 project(attTrackingError LANGUAGES CXX)
 
-# 1) Force C++17, PIC
-set(CMAKE_CXX_STANDARD 17)
+# 1) Force C++23, PIC
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -61,24 +61,24 @@ set_target_properties(attTrackingError PROPERTIES
 )
 
 # 9) Usage notes (omit flags here—toolchain file handles RISC-V):
-#    • Native Linux (Debug):
+#    - Native Linux (Debug):
 #        mkdir build_linux_debug && cd build_linux_debug
 #        cmake -DCMAKE_BUILD_TYPE=Debug ..
 #        make
 #
-#    • Native Linux (Release):
+#    - Native Linux (Release):
 #        mkdir build_linux_release && cd build_linux_release
 #        cmake -DCMAKE_BUILD_TYPE=Release ..
 #        make
 #
-#    • RISC-V 32 (Debug):
+#    - RISC-V 32 (Debug):
 #        mkdir build_riscv_debug && cd build_riscv_debug
 #        cmake -DCMAKE_BUILD_TYPE=Debug \
 #              -DCMAKE_TOOLCHAIN_FILE=../riscv32-toolchain.cmake \
 #              ..
 #        make
 #
-#    • RISC-V 32 (Release):
+#    - RISC-V 32 (Release):
 #        mkdir build_riscv_release && cd build_riscv_release
 #        cmake -DCMAKE_BUILD_TYPE=Release \
 #              -DCMAKE_TOOLCHAIN_FILE=../riscv32-toolchain.cmake \
