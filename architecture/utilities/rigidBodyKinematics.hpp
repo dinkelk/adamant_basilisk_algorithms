@@ -93,7 +93,7 @@ Eigen::Vector3<ScalarT> addMrp(const Eigen::Vector3<ScalarT> &mrp1, const Eigen:
         denominator = 1.0 + sigma1.dot(sigma1) * mrp2.dot(mrp2) - 2.0 * sigma1.dot(mrp2);
     }
 
-    assert(std::abs(denominator) > Types::eps);
+    assert(std::abs(denominator) > Types<ScalarT>::eps);
 
     Eigen::Vector3<ScalarT> numerator = (1.0 - sigma1.dot(sigma1)) * mrp2
                      + (1.0 - mrp2.dot(mrp2)) * sigma1
@@ -909,7 +909,7 @@ Eigen::Vector3<ScalarT> subMrp(const Eigen::Vector3<ScalarT> &mrp1,
         mrp1Shadow = mrpShadow(mrp1);  // Shadow set
         denominator = ScalarT(1) + mrp2.dot(mrp2) * mrp1Shadow.dot(mrp1Shadow) + ScalarT(2) * mrp2.dot(mrp1Shadow);
     }
-    assert(std::abs(denominator) > Types::eps);
+    assert(std::abs(denominator) > Types<ScalarT>::eps);
     Eigen::Vector3<ScalarT> numerator;
     numerator = (ScalarT(1) - mrp2.dot(mrp2)) * mrp1Shadow
                 - (ScalarT(1) - mrp1Shadow.dot(mrp1Shadow)) * mrp2
