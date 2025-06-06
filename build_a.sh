@@ -4,7 +4,8 @@
 #
 # Wrapper script to configure and build the attTrackingError static library
 # for either native Linux or RISC-V 32 targets, in Debug or Release mode.
-# It will remove any existing build directory before configuring.
+# It will remove any existing build directory before configuring, then
+# list all object files in the resulting .a archive.
 #
 # Usage:
 #   ./build_a.sh                # defaults to linux debug
@@ -97,3 +98,8 @@ make VERBOSE=1
 echo
 echo "Build completed successfully!"
 echo "The static library can be found at: $(pwd)/lib/libattTrackingError.a"
+
+# 7) List all object files in the archive
+echo
+echo "Step 5: Listing object files in libattTrackingError.a..."
+ar -t lib/libattTrackingError.a
