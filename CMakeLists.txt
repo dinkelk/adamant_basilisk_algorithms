@@ -33,8 +33,10 @@ endif()
 
 include_directories(
   ${PROJECT_SOURCE_DIR}                             # root headers
+  ${PROJECT_SOURCE_DIR}/attTrackingError            # attitude tracking files
+  ${PROJECT_SOURCE_DIR}/rateDamp                    # rate damping algorithm files
   ${PROJECT_SOURCE_DIR}/architecture/utilities      # avsEigenSupport.h, etc.
-  ${PROJECT_SOURCE_DIR}/architecture/msgPayloadDefC  # AttGuidMsgPayload.h, etc.
+  ${PROJECT_SOURCE_DIR}/architecture/msgPayloadDefC  # messaging headers
   ${EIGEN3_DIR}                                     # Eigen headers
 )
 
@@ -43,65 +45,73 @@ add_compile_definitions(EIGEN_FREESTANDING=1)
 
 # 6) Source files for static library
 set(SRC_FILES
-  attTrackingErrorAlgorithm.cpp
+  attTrackingError/attTrackingErrorAlgorithm.cpp
+  rateDamp/rateDampAlgorithm.cpp
   architecture/utilities/avsEigenSupport.cpp
-  attTrackingErrorAlgorithm_c.cpp   # C shim implementation
+  attTrackingError/attTrackingErrorAlgorithm_c.cpp   # attitude shim
+  rateDamp/rateDampAlgorithm_c.cpp                   # rate damp shim
 )
 
-# 7) Build the static library (libattTrackingError.a)
-add_library(attTrackingError STATIC ${SRC_FILES})
+# 7) Build the static library (libgncAlgorithms.a)
+add_library(gncAlgorithms STATIC ${SRC_FILES})
 
 # Place the archive in build/lib/
-set_target_properties(attTrackingError PROPERTIES
+set_target_properties(gncAlgorithms PROPERTIES
   ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
 )
 
 # 8) Generate Ada bindings (always, for both Linux and RISC-V)
-#
-#    We run `<CMAKE_CXX_COMPILER> -c -fdump-ada-spec -C attTrackingErrorAlgorithm_c.h`
-#    inside the bindings directory so that the `.ads` lands there.
-#
-#    Output: ${CMAKE_BINARY_DIR}/bindings/attTrackingErrorAlgorithm_c.ads
-
-# Ensure the bindings output directory exists
 set(BINDINGS_DIR "${CMAKE_BINARY_DIR}/bindings")
 file(MAKE_DIRECTORY "${BINDINGS_DIR}")
 
-# Input header and output spec
-set(ADA_HEADER "${PROJECT_SOURCE_DIR}/attTrackingErrorAlgorithm_c.h")
-set(ADA_SPEC   "${BINDINGS_DIR}/attTrackingErrorAlgorithm_c.ads")
+set(ADA_HEADER1 "${PROJECT_SOURCE_DIR}/attTrackingError/attTrackingErrorAlgorithm_c.h")
+set(ADA_SPEC1   "${BINDINGS_DIR}/attTrackingErrorAlgorithm_c.ads")
 
-# Compose include flags (space-separated)
+set(ADA_HEADER2 "${PROJECT_SOURCE_DIR}/rateDamp/rateDampAlgorithm_c.h")
+set(ADA_SPEC2   "${BINDINGS_DIR}/rateDampAlgorithm_c.ads")
+
 set(INCLUDE_FLAGS
   "-I${PROJECT_SOURCE_DIR}"
+  "-I${PROJECT_SOURCE_DIR}/attTrackingError"
+  "-I${PROJECT_SOURCE_DIR}/rateDamp"
   "-I${PROJECT_SOURCE_DIR}/architecture/utilities"
   "-I${PROJECT_SOURCE_DIR}/architecture/msgPayloadDefC"
   "-I${EIGEN3_DIR}"
 )
 
 add_custom_command(
-  OUTPUT "${ADA_SPEC}"
+  OUTPUT "${ADA_SPEC1}"
   WORKING_DIRECTORY "${BINDINGS_DIR}"
   COMMAND ${CMAKE_CXX_COMPILER}
           "-c"
           "-fdump-ada-spec"
-          "-C" "${ADA_HEADER}"
+          "-C" "${ADA_HEADER1}"
           ${INCLUDE_FLAGS}
           "-DEIGEN_FREESTANDING=1"
-  COMMENT "Generating Ada spec: ${ADA_SPEC}"
+  COMMENT "Generating Ada spec: ${ADA_SPEC1}"
   VERBATIM
 )
 
-# Create a custom target that always runs the binding generation
-add_custom_target(generate_ada_bindings ALL
-  DEPENDS "${ADA_SPEC}"
+add_custom_command(
+  OUTPUT "${ADA_SPEC2}"
+  WORKING_DIRECTORY "${BINDINGS_DIR}"
+  COMMAND ${CMAKE_CXX_COMPILER}
+          "-c"
+          "-fdump-ada-spec"
+          "-C" "${ADA_HEADER2}"
+          ${INCLUDE_FLAGS}
+          "-DEIGEN_FREESTANDING=1"
+  COMMENT "Generating Ada spec: ${ADA_SPEC2}"
+  VERBATIM
 )
 
-# Ensure the static library build depends on the Ada bindings
-add_dependencies(attTrackingError generate_ada_bindings)
+add_custom_target(generate_ada_bindings ALL
+  DEPENDS "${ADA_SPEC1}" "${ADA_SPEC2}"
+)
 
-# 9) Usage summary
-#
+add_dependencies(gncAlgorithms generate_ada_bindings)
+
+# 9) Usage summary:
 # Native Linux (Debug):
 #   mkdir build_linux_debug && cd build_linux_debug
 #   cmake -DCMAKE_BUILD_TYPE=Debug ..
@@ -126,5 +136,5 @@ add_dependencies(attTrackingError generate_ada_bindings)
 #         ..
 #   make
 #
-# The generated Ada spec is in <build_dir>/bindings/attTrackingErrorAlgorithm_c.ads
-# The static archive is in <build_dir>/lib/libattTrackingError.a
+# The generated Ada specs are in <build_dir>/bindings/*.ads
+# The static archive is in <build_dir>/lib/libgncAlgorithms.a

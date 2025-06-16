@@ -97,9 +97,9 @@ make VERBOSE=1
 
 echo
 echo "Build completed successfully!"
-echo "The static library can be found at: $(pwd)/lib/libattTrackingError.a"
+echo "The static library can be found at: $(pwd)/lib/libgncAlgorithms.a"
 
 # 7) List all object files in the archive
 echo
-echo "Step 5: Listing object files in libattTrackingError.a..."
-ar -t lib/libattTrackingError.a
+echo "Step 5: Listing object files in libgncAlgorithms.a..."
+ar -t lib/libgncAlgorithms.a
