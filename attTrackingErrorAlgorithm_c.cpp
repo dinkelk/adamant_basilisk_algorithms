@@ -1,63 +1,78 @@
-#include "attTrackingErrorAlgorithm_c.h"
-#include "attTrackingErrorAlgorithm.h"  // Original C++ header
-#include <Eigen/Core>                   // For Eigen::Vector3f
-
-extern "C" {
-
-/*
- * Allocate a new C++ AttTrackingErrorAlgorithm on the heap.
+/* ISC License
+ *
+ * Copyright (c) 2025, Laboratory for Atmospheric and Space Physics,
+ * University of Colorado at Boulder
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-AttTrackingErrorAlgorithm* attea_new() {
-    return new AttTrackingErrorAlgorithm();
-}
 
-/*
- * Delete a C++ AttTrackingErrorAlgorithm previously created with attea_new().
- */
-void attea_delete(AttTrackingErrorAlgorithm* ptr) {
-    delete ptr;
-}
+#include "AttTrackingErrorAlgorithm_c.h"
+#include "AttTrackingErrorAlgorithm.h"  // the original C++ class
+#include <Eigen/Core>
 
-/*
- * Call the C++ reset(uint64_t) method.
- */
-void attea_reset(AttTrackingErrorAlgorithm* ptr, uint64_t callTime) {
-    ptr->reset(callTime);
-}
-
-/*
- * Call the C++ update(uint64_t, AttRefMsgPayload&, NavAttMsgPayload&).
- * Returns a copy of AttGuidMsgPayload by value.
- */
-AttGuidMsgPayload
-attea_update(AttTrackingErrorAlgorithm* ptr,
-             uint64_t callTime,
-             AttRefMsgPayload* attRefIn,
-             NavAttMsgPayload* attNavIn)
+AttTrackingErrorAlgorithm*
+AttTrackingErrorAlgorithm_create(void)
 {
-    // Dereference the C pointers back into C++ references:
-    return ptr->update(callTime, *attRefIn, *attNavIn);
+    return reinterpret_cast<AttTrackingErrorAlgorithm*>(
+        new ::AttTrackingErrorAlgorithm());
 }
 
-/*
- * Call the C++ setSigma_R0R(const Eigen::Vector3f&).
- * Ada passes a float[3]; convert to Eigen::Vector3f.
- */
-void attea_set_sigma_R0R(AttTrackingErrorAlgorithm* ptr, float sigma[3]) {
-    Eigen::Vector3f v;
-    v << sigma[0], sigma[1], sigma[2];
-    ptr->setSigma_R0R(v);
+void
+AttTrackingErrorAlgorithm_destroy(AttTrackingErrorAlgorithm* self)
+{
+    delete reinterpret_cast<::AttTrackingErrorAlgorithm*>(self);
 }
 
-/*
- * Call the C++ getSigma_R0R() const.
- * Convert the returned Eigen::Vector3f into three floats.
- */
-void attea_get_sigma_R0R(AttTrackingErrorAlgorithm* ptr, float out_sigma[3]) {
-    Eigen::Vector3f v = ptr->getSigma_R0R();
-    out_sigma[0] = v[0];
-    out_sigma[1] = v[1];
-    out_sigma[2] = v[2];
+void
+AttTrackingErrorAlgorithm_reset(AttTrackingErrorAlgorithm* self,
+                                uint64_t callTime)
+{
+    reinterpret_cast<::AttTrackingErrorAlgorithm*>(self)
+        ->reset(callTime);
 }
 
-}  // extern "C"
+AttGuidMsgPayload
+AttTrackingErrorAlgorithm_update(AttTrackingErrorAlgorithm* self,
+                                 uint64_t callTime,
+                                 AttRefMsgPayload* attRefInMsg,
+                                 NavAttMsgPayload* attNavInMsg)
+{
+    return reinterpret_cast<::AttTrackingErrorAlgorithm*>(self)
+        ->update(callTime, *attRefInMsg, *attNavInMsg);
+}
+
+void
+AttTrackingErrorAlgorithm_setSigma_R0R(AttTrackingErrorAlgorithm* self,
+                                       Vector3f_c sigma_R0R)
+{
+    Eigen::Vector3f vec;
+    vec << sigma_R0R.data[0],
+           sigma_R0R.data[1],
+           sigma_R0R.data[2];
+    reinterpret_cast<::AttTrackingErrorAlgorithm*>(self)
+        ->setSigma_R0R(vec);
+}
+
+Vector3f_c
+AttTrackingErrorAlgorithm_getSigma_R0R(AttTrackingErrorAlgorithm* self)
+{
+    Eigen::Vector3f vec =
+        reinterpret_cast<::AttTrackingErrorAlgorithm*>(self)
+            ->getSigma_R0R();
+    Vector3f_c out;
+    out.data[0] = vec[0];
+    out.data[1] = vec[1];
+    out.data[2] = vec[2];
+    return out;
+}
+
