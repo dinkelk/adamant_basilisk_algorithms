@@ -16,39 +16,35 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "RateDampAlgorithm_c.h"
+#include "rateDampAlgorithm_c.h"
 #include "rateDampAlgorithm.h"  // the original C++ class
 
-RateDampAlgorithm*
-RateDampAlgorithm_create(void)
+RateDampAlgorithm* RateDampAlgorithm_create(void)
 {
     return reinterpret_cast<RateDampAlgorithm*>(
         new ::RateDampAlgorithm());
 }
 
-void
-RateDampAlgorithm_destroy(RateDampAlgorithm* self)
+void RateDampAlgorithm_destroy(RateDampAlgorithm* self)
 {
     delete reinterpret_cast<::RateDampAlgorithm*>(self);
 }
 
-CmdTorqueBodyMsgPayload
-RateDampAlgorithm_update(RateDampAlgorithm* self,
-                         uint64_t currentSimNanos,
-                         NavAttMsgPayload* attNavInMsg)
+CmdTorqueBodyMsgPayload RateDampAlgorithm_update(
+    RateDampAlgorithm* self,
+    uint64_t currentSimNanos,
+    NavAttMsgPayload* attNavInMsg)
 {
     return reinterpret_cast<::RateDampAlgorithm*>(self)
         ->update(currentSimNanos, *attNavInMsg);
 }
 
-void
-RateDampAlgorithm_setRateGain(RateDampAlgorithm* self, float p)
+void RateDampAlgorithm_setRateGain(RateDampAlgorithm* self, float p)
 {
     reinterpret_cast<::RateDampAlgorithm*>(self)->setRateGain(p);
 }
 
-float
-RateDampAlgorithm_getRateGain(RateDampAlgorithm* self)
+float RateDampAlgorithm_getRateGain(RateDampAlgorithm* self)
 {
     return reinterpret_cast<::RateDampAlgorithm*>(self)->getRateGain();
 }

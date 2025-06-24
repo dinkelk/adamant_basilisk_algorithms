@@ -20,8 +20,8 @@
 #define RATEDAMPALGORITHM_C_H
 
 #include <stdint.h>
-#include "CmdTorqueBodyMsgPayload.h"
-#include "NavAttMsgPayload.h"
+#include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,9 +51,10 @@ void RateDampAlgorithm_destroy(RateDampAlgorithm* self);
  * @param attNavInMsg     Pointer to navigation attitude message payload.
  * @return CmdTorqueBodyMsgPayload  Computed torque command.
  */
-CmdTorqueBodyMsgPayload RateDampAlgorithm_update(RateDampAlgorithm* self,
-                                                 uint64_t currentSimNanos,
-                                                 NavAttMsgPayload* attNavInMsg);
+CmdTorqueBodyMsgPayload RateDampAlgorithm_update(
+    RateDampAlgorithm* self,
+    uint64_t currentSimNanos,
+    NavAttMsgPayload* attNavInMsg);
 
 /**
  * @brief Set the rate feedback gain.
