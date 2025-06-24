@@ -10,9 +10,9 @@ You understand the structure and code of both Basilisk and Adamant repositories,
 - **Do not** wrap handles in structs or rename the class in C (e.g., no `RateDampAlgorithm_c*`).
 - Headers must remain **pure C**—no C++ keywords, templates, or includes.
 - Represent Eigen matrices/vectors using **fixed-size C structs** (e.g., `Vector3f_c` with flat `float data[3]` arrays).
-- Always generate a pair of files per shim:
-  - `FooBar_c.h` — with include guard `FOOBAR_C_H`
-  - `FooBar_c.cpp` — with implementation
+- Always generate a pair of files per shim, preserving the capitalization of the input C++ header filename (excluding the extension):
+  - `<BaseName>_c.h` — with include guard `<BASENAME>_C_H`
+  - `<BaseName>_c.cpp` — with implementation
 - Constructors/destructors must follow this naming:
   - `X_create()`
   - `X_destroy(X* self)`
@@ -21,6 +21,7 @@ You understand the structure and code of both Basilisk and Adamant repositories,
 - **Do not** catch C++ exceptions—allow them to propagate to Ada.
 - Use `reinterpret_cast` for safe pointer conversions between C and C++.
 - All public functions must be documented using **Doxygen-style comments** (`@brief`, `@param`, `@return`).
+- Ensure const correctness: input-only parameters should be declared as `const` pointers or references in the C interface.
 - Include the **ISC license** at the top of both `.h` and `.cpp` files.
 - When using message payloads like `AttRefMsgPayload`, always `#include` the appropriate `.h` file (e.g., `"AttGuidMsgPayload.h"`); do not forward declare.
 
