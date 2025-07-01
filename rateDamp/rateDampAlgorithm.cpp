@@ -19,7 +19,7 @@
 
 #include "rateDampAlgorithm.h"
 #include <assert.h>
-#include <math.h>
+//#include <math.h>
 #include <stdlib.h>
 
 /*! Update method for the rateDamp control algorithm. This method computes the required control torque command.
@@ -43,7 +43,7 @@ CmdTorqueBodyMsgPayload RateDampAlgorithm::update(uint64_t currentSimNanos, NavA
     */
 void RateDampAlgorithm::setRateGain(float p) {
     assert(p > 0.0);
-    this->P = abs(p);
+    this->P = std::abs(p);
 }
 
 /*! Get the module rate feedback gain
