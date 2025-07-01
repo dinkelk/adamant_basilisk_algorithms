@@ -19,8 +19,8 @@ if(NOT CMAKE_CROSSCOMPILING)
     set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} " CACHE STRING "" FORCE)
   else()
     message(STATUS "Configuring native Linux Release flags")
-    set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE}   -O3 -DNDEBUG" CACHE STRING "" FORCE)
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG" CACHE STRING "" FORCE)
+    set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE}   -O3 -DNDEBUG -ffreestanding" CACHE STRING "" FORCE)
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG -ffreestanding" CACHE STRING "" FORCE)
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} " CACHE STRING "" FORCE)
   endif()
 endif()
@@ -36,7 +36,7 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/attTrackingError            # attitude tracking files
   ${PROJECT_SOURCE_DIR}/rateDamp                    # rate damping algorithm files
   ${PROJECT_SOURCE_DIR}/architecture/utilities      # avsEigenSupport.h, etc.
-  ${PROJECT_SOURCE_DIR}/architecture/msgPayloadDefC  # messaging headers
+  ${PROJECT_SOURCE_DIR}/architecture/msgPayloadDefC # messaging headers
   ${EIGEN3_DIR}                                     # Eigen headers
 )
 
