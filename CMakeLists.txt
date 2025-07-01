@@ -14,9 +14,9 @@ message(STATUS "Build type: ${BUILD_TYPE_UPPER}")
 if(NOT CMAKE_CROSSCOMPILING)
   if(BUILD_TYPE_UPPER STREQUAL "DEBUG")
     message(STATUS "Configuring native Linux Debug flags")
-    set(CMAKE_C_FLAGS_DEBUG   "${CMAKE_C_FLAGS_DEBUG}   -O0 -g"        CACHE STRING "" FORCE)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g"        CACHE STRING "" FORCE)
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} "    CACHE STRING "" FORCE)
+    set(CMAKE_C_FLAGS_DEBUG   "${CMAKE_C_FLAGS_DEBUG}   -O0 -g -ffreestanding" CACHE STRING "" FORCE)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -ffreestanding"  CACHE STRING "" FORCE)
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} " CACHE STRING "" FORCE)
   else()
     message(STATUS "Configuring native Linux Release flags")
     set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE}   -O3 -DNDEBUG" CACHE STRING "" FORCE)
@@ -58,6 +58,10 @@ add_library(gncAlgorithms STATIC ${SRC_FILES})
 # Place the archive in build/lib/
 set_target_properties(gncAlgorithms PROPERTIES
   ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
+)
+
+target_compile_options(gncAlgorithms PRIVATE
+  -include ${EIGEN3_DIR}/Eigen/src/Freestanding/all_freestanding.hpp
 )
 
 # 8) Generate Ada bindings (always, for both Linux and RISC-V)
