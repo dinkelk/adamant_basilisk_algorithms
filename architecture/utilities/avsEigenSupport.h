@@ -19,7 +19,7 @@
 
 #ifndef _AVSEIGENSUPPORT_
 #define _AVSEIGENSUPPORT_
-#include "Eigen/src/Freestanding/freestanding_fpclassify.h"
+
 #include "avsEigenMRP.h"
 
 #include <Eigen/Core>

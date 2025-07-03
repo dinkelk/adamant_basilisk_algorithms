@@ -19,78 +19,71 @@
 #ifndef ATTTRACKINGERRORALGORITHM_C_H
 #define ATTTRACKINGERRORALGORITHM_C_H
 
-#include <stdint.h>
-#include "AttGuidMsgPayload.h"
-#include "AttRefMsgPayload.h"
-#include "NavAttMsgPayload.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/**
- * @brief Opaque handle to the C++ AttTrackingErrorAlgorithm instance.
- */
+#include <stdint.h>
+#include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
+#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+
+/** Opaque handle for an AttTrackingErrorAlgorithm instance. */
 typedef struct AttTrackingErrorAlgorithm AttTrackingErrorAlgorithm;
 
-/**
- * @brief POD representation of a 3-vector (Eigen::Vector3f).
- */
+/** @brief Flattened 3D vector for C interoperability */
 typedef struct {
     float data[3];
 } Vector3f_c;
 
 /**
- * @brief Construct a new AttTrackingErrorAlgorithm instance.
- * @return Pointer to a new AttTrackingErrorAlgorithm (must be destroyed).
+ * @brief Construct a new AttTrackingErrorAlgorithm.
+ * @return Pointer to the new AttTrackingErrorAlgorithm.
  */
 AttTrackingErrorAlgorithm* AttTrackingErrorAlgorithm_create(void);
 
 /**
- * @brief Destroy a previously created AttTrackingErrorAlgorithm.
- * @param self Pointer to the instance to destroy.
+ * @brief Destroy an AttTrackingErrorAlgorithm.
+ * @param self The instance to destroy.
  */
 void AttTrackingErrorAlgorithm_destroy(AttTrackingErrorAlgorithm* self);
 
 /**
  * @brief Reset the algorithm state.
- * @param self     Pointer to the instance.
- * @param callTime Time stamp for reset.
+ * @param self     The algorithm instance.
+ * @param callTime The clock time at which the function was called (nanoseconds).
  */
-void AttTrackingErrorAlgorithm_reset(AttTrackingErrorAlgorithm* self,
-                                     uint64_t callTime);
+void AttTrackingErrorAlgorithm_reset(AttTrackingErrorAlgorithm* self, uint64_t callTime);
 
 /**
- * @brief Run the update step.
- * @param self         Pointer to the instance.
- * @param callTime     Time stamp for update.
- * @param attRefInMsg  Pointer to reference-frame message payload.
- * @param attNavInMsg  Pointer to navigation attitude message payload.
- * @return AttGuidMsgPayload  The computed guidance message.
+ * @brief Run the update step of the attitude tracking error algorithm.
+ * @param self         The algorithm instance.
+ * @param callTime     The clock time at which the function was called (nanoseconds).
+ * @param attRefInMsg  Pointer to the attitude reference message payload.
+ * @param attNavInMsg  Pointer to the navigation attitude message payload.
+ * @return Computed attitude guidance message payload.
  */
-AttGuidMsgPayload
-AttTrackingErrorAlgorithm_update(AttTrackingErrorAlgorithm* self,
-                                 uint64_t callTime,
-                                 AttRefMsgPayload* attRefInMsg,
-                                 NavAttMsgPayload* attNavInMsg);
+AttGuidMsgPayload AttTrackingErrorAlgorithm_update(AttTrackingErrorAlgorithm* self,
+                                                   uint64_t callTime,
+                                                   AttRefMsgPayload* attRefInMsg,
+                                                   NavAttMsgPayload* attNavInMsg);
 
 /**
- * @brief Set the σ_R0R three-vector.
- * @param self      Pointer to the instance.
- * @param sigma_R0R 3-vector in flattened POD format.
+ * @brief Set the sigma_R0R parameter (MRP from corrected reference frame to original reference frame R0).
+ * @param self      The algorithm instance.
+ * @param sigma_R0R The 3-vector in flattened POD format.
  */
-void AttTrackingErrorAlgorithm_setSigma_R0R(AttTrackingErrorAlgorithm* self,
-                                            Vector3f_c sigma_R0R);
+void AttTrackingErrorAlgorithm_setSigma_R0R(AttTrackingErrorAlgorithm* self, Vector3f_c sigma_R0R);
 
 /**
- * @brief Get the current σ_R0R three-vector.
- * @param self Pointer to the instance.
- * @return Vector3f_c  Flattened POD containing the vector.
+ * @brief Get the current sigma_R0R parameter.
+ * @param self The algorithm instance.
+ * @return The current sigma_R0R vector in flattened POD format.
  */
-Vector3f_c AttTrackingErrorAlgorithm_getSigma_R0R(AttTrackingErrorAlgorithm* self);
+Vector3f_c AttTrackingErrorAlgorithm_getSigma_R0R(const AttTrackingErrorAlgorithm* self);
 
 #ifdef __cplusplus
-}  // extern "C"
+}
 #endif
 
 #endif  // ATTTRACKINGERRORALGORITHM_C_H

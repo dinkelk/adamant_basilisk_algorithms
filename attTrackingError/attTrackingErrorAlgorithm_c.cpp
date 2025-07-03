@@ -16,8 +16,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "AttTrackingErrorAlgorithm_c.h"
-#include "AttTrackingErrorAlgorithm.h"  // the original C++ class
+#include "attTrackingErrorAlgorithm_c.h"
+#include "attTrackingErrorAlgorithm.h"  // the original C++ class
 #include <Eigen/Core>
 
 AttTrackingErrorAlgorithm*
@@ -64,10 +64,10 @@ AttTrackingErrorAlgorithm_setSigma_R0R(AttTrackingErrorAlgorithm* self,
 }
 
 Vector3f_c
-AttTrackingErrorAlgorithm_getSigma_R0R(AttTrackingErrorAlgorithm* self)
+AttTrackingErrorAlgorithm_getSigma_R0R(const AttTrackingErrorAlgorithm* self)
 {
-    Eigen::Vector3f vec =
-        reinterpret_cast<::AttTrackingErrorAlgorithm*>(self)
+    const Eigen::Vector3f& vec =
+        reinterpret_cast<const ::AttTrackingErrorAlgorithm*>(self)
             ->getSigma_R0R();
     Vector3f_c out;
     out.data[0] = vec[0];
@@ -75,4 +75,3 @@ AttTrackingErrorAlgorithm_getSigma_R0R(AttTrackingErrorAlgorithm* self)
     out.data[2] = vec[2];
     return out;
 }
-

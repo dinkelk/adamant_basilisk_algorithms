@@ -19,7 +19,6 @@
 
 #ifndef _ATT_TRACKING_ERROR_ALGORITHM_H
 #define _ATT_TRACKING_ERROR_ALGORITHM_H
-#include "Eigen/src/Freestanding/freestanding_fpclassify.h"
 
 #include <Eigen/Core>
 
